@@ -30,12 +30,6 @@ public class MessageController {
                 .orElse(ResponseEntity.ok().build());
     }
 
-    @GetMapping("/accounts/{accountId}/messages")
-    public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable Integer accountId) {
-        List<Message> messages = messageService.getMessagesByUser(accountId);
-        return ResponseEntity.ok(messages);
-    }
-
     @PostMapping
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
         try {
