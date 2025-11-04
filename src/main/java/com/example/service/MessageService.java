@@ -20,7 +20,7 @@ public class MessageService {
     }
 
     public List<Message> getAllMessages() {
-        return messageRepository.findAll();
+        return messageRepository.findAllByOrderByMessageIdDesc();
     }
 
     public Optional<Message> getMessageById(Integer messageId) {

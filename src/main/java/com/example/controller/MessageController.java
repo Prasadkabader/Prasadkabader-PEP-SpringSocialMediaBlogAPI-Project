@@ -27,12 +27,13 @@ public class MessageController {
     public ResponseEntity<Message> getMessageById(@PathVariable Integer messageId) {
         return messageService.getMessageById(messageId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.ok().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/accounts/{accountId}")
-    public List<Message> getMessagesByUser(@PathVariable Integer accountId) {
-        return messageService.getMessagesByUser(accountId);
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable Integer accountId) {
+        List<Message> messages = messageService.getMessagesByUser(accountId);
+        return ResponseEntity.ok(messages);
     }
 
     @PostMapping
@@ -61,10 +62,8 @@ public class MessageController {
     }
 
     @DeleteMapping("/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable Integer messageId) {
+    public ResponseEntity<Integer> deleteMessage(@PathVariable Integer messageId) {
         boolean deleted = messageService.deleteMessage(messageId);
-        return deleted ? 
-            ResponseEntity.ok().build() : 
-            ResponseEntity.ok().build();
+        return ResponseEntity.ok(deleted ? 1 : 0);
     }
 }
