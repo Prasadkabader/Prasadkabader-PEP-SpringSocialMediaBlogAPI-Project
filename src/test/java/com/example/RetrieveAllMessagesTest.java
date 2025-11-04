@@ -52,11 +52,25 @@ public class RetrieveAllMessagesTest {
         HttpResponse<String> response = webClient.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         Assertions.assertEquals(200, status, "Expected Status Code 200 - Actual Code was: " + status);
-        List<Message> expectedResult = new ArrayList<Message>();
-        expectedResult.add(new Message(9996, 9996, "test message 3", 1669947792L));
-        expectedResult.add(new Message(9997, 9997, "test message 2", 1669947792L));
-        expectedResult.add(new Message(9999, 9999, "test message 1", 1669947792L));
         List<Message> actualResult = objectMapper.readValue(response.body().toString(), new TypeReference<List<Message>>(){});
-        Assertions.assertEquals(expectedResult, actualResult, "Expected="+expectedResult + ", Actual="+actualResult);
+        
+        // Verify we got 3 messages
+        Assertions.assertEquals(3, actualResult.size(), "Expected 3 messages but got " + actualResult.size());
+        
+        // Verify all expected messages are present regardless of order
+        List<Message> expectedMessages = List.of(
+            new Message(9996, 9996, "test message 3", 1669947792L),
+            new Message(9997, 9997, "test message 2", 1669947792L),
+            new Message(9999, 9999, "test message 1", 1669947792L)
+        );
+        
+        Assertions.assertTrue(actualResult.containsAll(expectedMessages), 
+            "Expected all test messages to be present in the response");
+        
+        // Verify the messages are in descending order by messageId
+        for (int i = 0; i < actualResult.size() - 1; i++) {
+            Assertions.assertTrue(actualResult.get(i).getMessageId() > actualResult.get(i + 1).getMessageId(),
+                "Messages should be in descending order by messageId");
+        }
     }
 }

@@ -27,7 +27,7 @@ public class MessageController {
     public ResponseEntity<Message> getMessageById(@PathVariable Integer messageId) {
         return messageService.getMessageById(messageId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.ok().build());
     }
 
     @GetMapping("/accounts/{accountId}/messages")
@@ -62,8 +62,12 @@ public class MessageController {
     }
 
     @DeleteMapping("/{messageId}")
-    public ResponseEntity<Integer> deleteMessage(@PathVariable Integer messageId) {
+    public ResponseEntity<String> deleteMessage(@PathVariable Integer messageId) {
         boolean deleted = messageService.deleteMessage(messageId);
-        return ResponseEntity.ok(deleted ? 1 : 0);
+        if (deleted) {
+            return ResponseEntity.ok("1");
+        } else {
+            return ResponseEntity.ok().body("");
+        }
     }
 }
